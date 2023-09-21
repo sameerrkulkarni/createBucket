@@ -1,5 +1,5 @@
 # serverless.yml
-service: s_three_bucket
+service: sThreeBucket
 provider:
   name: aws
   runtime: nodejs18.x

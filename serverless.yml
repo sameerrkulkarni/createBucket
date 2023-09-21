@@ -1,0 +1,46 @@
+# serverless.yml
+service: s_three_bucket
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  apiGateway:
+    # accepted binary type for file uploads
+    binaryMediaTypes:
+      - 'multipart/form-data'
+functions:
+  # sync upload
+  uploadFile:
+    handler: api.handle
+    events:
+      - http:
+          method: post
+          path: upload
+          cors: true
+resources:
+  Resources:
+    MyServerlessExampleBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: serverless-s3-bucket
+    # define a policy for an existing role
+    UploadFilePolicy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyName: UploadObjects
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: LambdaPutObjects
+              Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:PutObjectTagging
+              Resource:
+                Fn::Join:
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Ref: MyServerlessExampleBucket
+                    - "/*"
+        Roles:
+          - newRoleCreate

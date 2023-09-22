@@ -9,6 +9,7 @@ provider:
 functions:
   uploadFile:
     handler: api.handle
+    role: newRoleCreate
     events:
       - http:
           method: post

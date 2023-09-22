@@ -1,17 +1,15 @@
-# serverless.yml
 service: sThreeBucket
 provider:
   name: aws
   runtime: nodejs18.x
   region: ap-south-1
   apiGateway:
-    # accepted binary type for file uploads
     binaryMediaTypes:
       - 'multipart/form-data'
 functions:
-  # sync upload
   uploadFile:
     handler: api.handle
+    role: sThreeBucket-dev-ap-south-1-lambdaRole
     events:
       - http:
           method: post
@@ -23,7 +21,24 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: serverless-s8-bucket
-    # define a policy for an existing role
+    # Define an IAM role for the Lambda function
+    MyLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: MyLambdaRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        ManagedPolicyArns:
+          - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' # Add any additional managed policies if needed
+
+    # Attach the policy to the Lambda role
     UploadFilePolicy:
       Type: AWS::IAM::Policy
       Properties:
@@ -31,7 +46,7 @@ resources:
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
-            - Sid: LambdaPutObjects
+            - Sid: S3PutObjects
               Effect: Allow
               Action:
                 - s3:PutObject
@@ -43,4 +58,4 @@ resources:
                     - Ref: MyServerlessExampleBucket
                     - "/*"
         Roles:
-          - newRoleCreate
+          - newRoleCreate # Reference the IAM role created for the Lambda function

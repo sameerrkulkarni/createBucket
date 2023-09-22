@@ -1,5 +1,5 @@
 # serverless.yml
-service: sThreeBucket
+service: YesThreeBucket
 provider:
   name: aws
   runtime: nodejs18.x
@@ -22,7 +22,7 @@ resources:
     MyServerlessExampleBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: serverless-s8-bucket
+        BucketName: serverless-s9-bucket
     # define a policy for an existing role
     UploadFilePolicy:
       Type: AWS::IAM::Policy
@@ -43,4 +43,4 @@ resources:
                     - Ref: MyServerlessExampleBucket
                     - "/*"
         Roles:
-          - newRoleCreate
+          - lastCreating
